@@ -1,0 +1,33 @@
+name: Build and Deploy API Docs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Give execute permission to script
+        run: chmod +x make.sh
+
+      - name: Build Docs
+        run: ./make.sh
+
+      - name: Deploy to Github pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: .
+          force_orphan: true
+          exclude_assets: '.github,openapi,.redocly.yaml,make.sh'
